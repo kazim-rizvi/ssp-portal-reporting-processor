@@ -8,12 +8,18 @@ type DbConnection struct {
 	Password string `json:"password"`
 }
 
-type AllDbConnections struct {
+type DbInstances struct {
 	PIData    DbConnection `json:"pi_data"`
 	Secondary DbConnection `json:"secondary"`
 	Primary   DbConnection `json:"primary"`
 }
 
+type DbDetails struct {
+	TvAd     DbInstances
+	MobileAd DbInstances
+}
+
 type SesCredentials struct {
-	Arn string
+	Arn      string `json:"arn"`
+	MailFrom string `json:"-"`
 }

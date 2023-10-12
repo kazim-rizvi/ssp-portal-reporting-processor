@@ -5,6 +5,7 @@ import (
 	"os"
 	"ssp-portal-reporting-processor/config"
 	"ssp-portal-reporting-processor/constants"
+	"ssp-portal-reporting-processor/service/aws/secrets_manager"
 	"ssp-portal-reporting-processor/utils"
 	// "ssp-portal-reporting-processor/service/csv"
 	// "ssp-portal-reporting-processor/email"
@@ -30,8 +31,9 @@ func main() {
 	}
 
 	// Deocode Secrets
-	config.DBConfig.MobileAdDb.Secret.Name
-
+	dbDetailsPtr, err := secrets_manager.RetrieveAllDbData(&config.DBConfig)
+	sesCredentialsPtr, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
+	s3CredentialsPtr := &config.S3Config
 
 	log.Printf("%+v\n", config)
 	// fmt.Printf(cfg.DBConfig.Host)

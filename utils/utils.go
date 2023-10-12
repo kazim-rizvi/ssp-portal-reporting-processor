@@ -23,7 +23,7 @@ func ExitProgram(failed bool) {
 	}
 }
 
-func UnmarshalJson[D any](value string, target D) (*D, error) {
+func UnmarshalJson[D any](value string) (*D, error) {
 	var data D
 	if err := json.Unmarshal([]byte(value), &data); err != nil {
 		fmt.Println("Error unmarshaling secret data:", err)
