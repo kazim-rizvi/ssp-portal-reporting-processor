@@ -5,7 +5,6 @@ package db
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"ssp-portal-reporting-processor/config"
 	"ssp-portal-reporting-processor/model"
@@ -18,18 +17,19 @@ type DataFetcher struct {
 }
 
 func NewDataFetcher(cfg config.DBConfig) (*DataFetcher, error) {
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
-		cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
+	// connectionString := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s",
+	// 	cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
 
-	db, err := sql.Open("mysql", connectionString)
-	if err != nil {
-		return nil, err
-	}
+	// db, err := sql.Open("mysql", connectionString)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
-	db.SetMaxOpenConns(1) // Set the maximum number of open connections
-	db.SetMaxIdleConns(1) // Set the maximum number of idle connections
+	// db.SetMaxOpenConns(1) // Set the maximum number of open connections
+	// db.SetMaxIdleConns(1) // Set the maximum number of idle connections
 
-	return &DataFetcher{db: db}, nil
+	// return &DataFetcher{db: db}, nil
+	return nil, nil
 }
 
 func (df *DataFetcher) FetchDataBatched(query string) ([]model.CreativeReviewModelLight, error) {

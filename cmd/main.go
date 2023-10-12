@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"ssp-portal-reporting-processor/config"
-	"ssp-portal-reporting-processor/db"
 	// "ssp-portal-reporting-processor/csv"
 	// "ssp-portal-reporting-processor/email"
 	// "ssp-portal-reporting-processor/s3"
@@ -28,20 +27,20 @@ func main() {
 	}
 
 	fmt.Printf("%+v\n", cfg)
-	fmt.Printf(cfg.DBConfig.Host)
+	// fmt.Printf(cfg.DBConfig.Host)
 
 	// Fetch data from the DB in a batched way
-	dataFetcher, err := db.NewDataFetcher(cfg.DBConfig)
-	if err != nil {
-		log.Fatalf("Error connecting to DB: %v", err)
-	}
-	data, err := dataFetcher.FetchDataBatched("select id, crid from ad_pool_app_info limit 10;")
-	dataFetcher.CloseConnection()
-	if err != nil {
-		log.Fatalf("Error fetching data: %v", err)
-	}
+	// dataFetcher, err := db.NewDataFetcher(cfg.DBConfig)
+	// if err != nil {
+	// 	log.Fatalf("Error connecting to DB: %v", err)
+	// }
+	// data, err := dataFetcher.FetchDataBatched("select id, crid from ad_pool_app_info limit 10;")
+	// dataFetcher.CloseConnection()
+	// if err != nil {
+	// 	log.Fatalf("Error fetching data: %v", err)
+	// }
 
-	log.Printf("%+v\n", data)
+	// log.Printf("%+v\n", data)
 
 	// // Write data to CSV
 	// csvWriter := csv.NewCSVWriter("")

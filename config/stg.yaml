@@ -14,7 +14,7 @@ s3:
   presignedUrlExpiryHours : 167
 
 email:
-  mailFrom: "akanksha.kr@stg-samsungrs.com",
+  mailFrom: "akanksha.kr@stg-samsungrs.com"
   secret:
     name : "tvportal/stg/mail"
     region : "ap-southeast-1"

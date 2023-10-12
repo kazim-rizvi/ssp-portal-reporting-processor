@@ -1,53 +1,58 @@
 package config
 
 import (
+	"slices"
+
 	"github.com/spf13/viper"
 )
 
 type Config struct {
 	DBConfig    DBConfig    `mapstructure:"db"`
-	CSVConfig   CSVConfig   `mapstructure:"csv"`
 	S3Config    S3Config    `mapstructure:"s3"`
 	EmailConfig EmailConfig `mapstructure:"email"`
 }
 
-type DBConfig struct {
-	// Database configuration fields
-	Host     string `mapstructure:"db_host"`
-	Port     int    `mapstructure:"db_port"`
-	Username string `mapstructure:"db_username"`
-	Password string `mapstructure:"db_password"`
-	Database string `mapstructure:"db_database"`
+type Secret struct {
+	Name   string `mapstructure:"name"`
+	Region string `mapstructure:"region"`
 }
 
-type CSVConfig struct {
-	// CSV configuration fields
-	OutputFilePath string
+type DBConfig struct {
+	// Database configuration fields
+	TvAdDb     DbSecret `mapstructure:"tvad"`
+	MobileAdDb DbSecret `mapstructure:"mobilead"`
+	// Host     string `mapstructure:"db_host"`
+	// Port     int    `mapstructure:"db_port"`
+	// Username string `mapstructure:"db_username"`
+	// Password string `mapstructure:"db_password"`
+	// Database string `mapstructure:"db_database"`
+}
+
+type DbSecret struct {
+	Secret Secret `mapstructure:"secret"`
 }
 
 type S3Config struct {
 	// S3 configuration fields
-	AccessKey               string `mapstructure:"s3_access_key"`
-	SecretKey               string `mapstructure:"s3_secret_key"`
-	Bucket                  string `mapstructure:"s3_bucket"`
-	Region                  string `mapstructure:"s3_region"`
-	PresignedURLExpiryHours int    `mapstructure:"presigned_url_expiry_hours"`
+	Bucket                  string `mapstructure:"bucketName"`
+	Region                  string `mapstructure:"region"`
+	PresignedURLExpiryHours int    `mapstructure:"presignedUrlExpiryHours"`
 }
 
 type EmailConfig struct {
 	// Email configuration fields
-	SMTPServer      string   `mapstructure:"smtp_server"`
-	SMTPPort        int      `mapstructure:"smtp_port"`
-	SMTPUsername    string   `mapstructure:"smtp_username"`
-	SMTPPassword    string   `mapstructure:"smtp_password"`
-	SenderEmail     string   `mapstructure:"sender_email"`
-	RecipientEmails []string `mapstructure:"recipient_emails"`
+	MailFrom string `mapstructure:"mailFrom"`
+	Secret   Secret `mapstructure:"secret"`
 }
 
-func LoadConfig(env string) (*Config, error) {
+func LoadConfig(profile string) (*Config, error) {
 	var cfg Config
-	// check for possible configs and throw error
-	viper.SetConfigName(env)
+	allProfiles := []string{"dev", "stg", "stg-int", "prd"}
+	isProfileCorrect := slices.Contains(allProfiles, profile)
+	if !isProfileCorrect {
+		return nil, viper.UnsupportedConfigError(profile)
+	}
+	viper.SetConfigName(profile)
 	viper.AddConfigPath("config/")
 	err := viper.ReadInConfig()
 	if err != nil {

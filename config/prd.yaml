@@ -14,7 +14,7 @@ s3:
   presignedUrlExpiryHours : 167
 
 email:
-  mailFrom: "noreply@samsungrs.com",
+  mailFrom: "noreply@samsungrs.com"
   secret:
     name : "tvportal/prd/mail"
     region : "us-east-1"
