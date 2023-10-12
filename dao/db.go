@@ -1,6 +1,4 @@
-// db/db.go
-
-package db
+package dao
 
 import (
 	"database/sql"

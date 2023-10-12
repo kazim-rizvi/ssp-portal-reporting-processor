@@ -21,11 +21,6 @@ type DBConfig struct {
 	// Database configuration fields
 	TvAdDb     DbSecret `mapstructure:"tvad"`
 	MobileAdDb DbSecret `mapstructure:"mobilead"`
-	// Host     string `mapstructure:"db_host"`
-	// Port     int    `mapstructure:"db_port"`
-	// Username string `mapstructure:"db_username"`
-	// Password string `mapstructure:"db_password"`
-	// Database string `mapstructure:"db_database"`
 }
 
 type DbSecret struct {
@@ -47,13 +42,13 @@ type EmailConfig struct {
 
 func LoadConfig(profile string) (*Config, error) {
 	var cfg Config
-	allProfiles := []string{"dev", "stg", "stg-int", "prd"}
+	allProfiles := []string{"local", "dev", "stg", "stg-int", "prd"}
 	isProfileCorrect := slices.Contains(allProfiles, profile)
 	if !isProfileCorrect {
 		return nil, viper.UnsupportedConfigError(profile)
 	}
 	viper.SetConfigName(profile)
-	viper.AddConfigPath("config/")
+	viper.AddConfigPath("config/resource")
 	err := viper.ReadInConfig()
 	if err != nil {
 		return nil, err

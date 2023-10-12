@@ -3,31 +3,37 @@ package main
 import (
 	"log"
 	"os"
-
 	"ssp-portal-reporting-processor/config"
-	// "ssp-portal-reporting-processor/csv"
+	"ssp-portal-reporting-processor/constants"
+	"ssp-portal-reporting-processor/utils"
+	// "ssp-portal-reporting-processor/service/csv"
 	// "ssp-portal-reporting-processor/email"
 	// "ssp-portal-reporting-processor/s3"
 )
 
 func main() {
 
+	// Fetch ENV Variables and Args
 	args := os.Args
-	currentProfile := os.Getenv("PROFILE")
-	projectVersion := os.Getenv("PROJECT_VERSION")
-	logDetails(currentProfile, "Current Profile", false)
-	logDetails(args, "Program Arguments", false)
-	logDetails(projectVersion, "Project Version", false)
-	// Print version also
-	// Load environment configuration
-	env := "dev" // Change this based on the environment
-	cfg, err := config.LoadConfig(env)
+	currentProfile := os.Getenv(constants.PROFILE)
+	projectVersion := os.Getenv(constants.PROJECT_VERSION)
+	reportRequestData := os.Getenv(constants.REPORT_REQUEST)
+
+	// Log the data
+	logData(projectVersion, currentProfile, args, reportRequestData)
+
+	// Load config for current profile
+	config, err := config.LoadConfig(currentProfile)
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
-		exitProgram(true)
+		utils.ExitProgram(true)
 	}
 
-	log.Printf("%+v\n", cfg)
+	// Deocode Secrets
+	config.DBConfig.MobileAdDb.Secret.Name
+
+
+	log.Printf("%+v\n", config)
 	// fmt.Printf(cfg.DBConfig.Host)
 
 	// Fetch data from the DB in a batched way
@@ -66,21 +72,12 @@ func main() {
 	// if err != nil {
 	// 	log.Fatalf("Error sending email: %v", err)
 	// }
-	exitProgram(false)
+	utils.ExitProgram(false)
 }
 
-func logDetails(val any, title string, isPanic bool) {
-	if isPanic {
-		log.Panicf("%v ::\n%v\n", title, val)
-	} else {
-		log.Printf("%v ::\n%v\n", title, val)
-	}
-}
-
-func exitProgram(failed bool) {
-	if failed {
-		os.Exit(1)
-	} else {
-		os.Exit(0)
-	}
+func logData(projectVersion string, currentProfile string, args []string, reportRequest string) {
+	utils.LogDetails(projectVersion, "Project Version", false)
+	utils.LogDetails(currentProfile, "Current Profile", false)
+	utils.LogDetails(args, "Program Arguments", false)
+	utils.LogDetails(reportRequest, "Report Request", false)
 }
