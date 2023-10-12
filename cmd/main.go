@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -14,19 +13,21 @@ import (
 func main() {
 
 	args := os.Args
-	fmt.Println("Args::")
-	fmt.Println(args)
-	fmt.Println("Env::")
-	fmt.Println(os.Getenv("PROFILE"))
+	currentProfile := os.Getenv("PROFILE")
+	projectVersion := os.Getenv("PROJECT_VERSION")
+	logDetails(currentProfile, "Current Profile", false)
+	logDetails(args, "Program Arguments", false)
+	logDetails(projectVersion, "Project Version", false)
 	// Print version also
 	// Load environment configuration
 	env := "dev" // Change this based on the environment
 	cfg, err := config.LoadConfig(env)
 	if err != nil {
 		log.Fatalf("Error loading config: %v", err)
+		exitProgram(true)
 	}
 
-	fmt.Printf("%+v\n", cfg)
+	log.Printf("%+v\n", cfg)
 	// fmt.Printf(cfg.DBConfig.Host)
 
 	// Fetch data from the DB in a batched way
@@ -65,4 +66,21 @@ func main() {
 	// if err != nil {
 	// 	log.Fatalf("Error sending email: %v", err)
 	// }
+	exitProgram(false)
+}
+
+func logDetails(val any, title string, isPanic bool) {
+	if isPanic {
+		log.Panicf("%v ::\n%v\n", title, val)
+	} else {
+		log.Printf("%v ::\n%v\n", title, val)
+	}
+}
+
+func exitProgram(failed bool) {
+	if failed {
+		os.Exit(1)
+	} else {
+		os.Exit(0)
+	}
 }
