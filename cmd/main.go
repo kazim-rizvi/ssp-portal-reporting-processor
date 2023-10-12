@@ -35,6 +35,12 @@ func main() {
 	sesCredentialsPtr, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
 	s3CredentialsPtr := &config.S3Config
 
+	//Log the data
+	// TODO: Remove this
+	utils.LogDetails(*dbDetailsPtr, "Db Details", false)
+	utils.LogDetails(*sesCredentialsPtr, "SES Credentials", false)
+	utils.LogDetails(*s3CredentialsPtr, "S3 Credentials", false)
+
 	log.Printf("%+v\n", config)
 	// fmt.Printf(cfg.DBConfig.Host)
 
