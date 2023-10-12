@@ -32,10 +32,18 @@ func main() {
 
 	// Deocode Secrets
 	dbDetailsPtr, err := secrets_manager.RetrieveAllDbData(&config.DBConfig)
+	if err != nil {
+		log.Fatalf("Error fetching DB details from secrets manager: %v", err)
+		utils.ExitProgram(true)
+	}
 	sesCredentialsPtr, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
+	if err != nil {
+		log.Fatalf("Error fetching SES credentials from secrets manager: %v", err)
+		utils.ExitProgram(true)
+	}
 	s3CredentialsPtr := &config.S3Config
 
-	//Log the data
+	// Log the data
 	// TODO: Remove this
 	utils.LogDetails(*dbDetailsPtr, "Db Details", false)
 	utils.LogDetails(*sesCredentialsPtr, "SES Credentials", false)
