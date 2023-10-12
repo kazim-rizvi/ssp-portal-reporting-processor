@@ -1,0 +1,20 @@
+db:
+  tvad:
+    secret:
+      name : "tvportal/stg/mysql"
+      region : "us-east-1"
+  mobilead:
+    secret:
+      name : "mobileportal/stg/mysql"
+      region : "us-east-1"
+
+s3:
+  bucketName: "ssp-masssp-tvserver-report-apse1-stg"
+  region: "us-east-1"
+  presignedUrlExpiryHours : 167
+
+email:
+  mailFrom: "n.varshini@stg-samsungrs.com",
+  secret:
+    name : "tvportal/stg/mail"
+    region : "us-east-1"
