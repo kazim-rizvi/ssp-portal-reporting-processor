@@ -2,11 +2,15 @@ package secrets_manager
 
 import (
 	"ssp-portal-reporting-processor/config"
+	"ssp-portal-reporting-processor/constants"
 	"ssp-portal-reporting-processor/model"
 	"ssp-portal-reporting-processor/utils"
 )
 
-func RetrieveAllDbData(dbConfig *config.DBConfig) (*model.DbDetails, error) {
+func RetrieveDbSecret(dbConfig *config.DBConfig) (*model.DbDetails, error) {
+	if constants.IS_LOCAL {
+		return getLocalDbConfig()
+	}
 	mobileAdSecretString, err := retrieveSecret(dbConfig.MobileAdDb.Secret.Region, dbConfig.MobileAdDb.Secret.Name)
 	if err != nil {
 		return nil, err
@@ -30,6 +34,9 @@ func RetrieveAllDbData(dbConfig *config.DBConfig) (*model.DbDetails, error) {
 }
 
 func RetrieveEmailSecret(emailConfig *config.EmailConfig) (*model.SesCredentials, error) {
+	if constants.IS_LOCAL {
+		return new(model.SesCredentials), nil
+	}
 	emailSecretString, err := retrieveSecret(emailConfig.Secret.Region, emailConfig.Secret.Name)
 	if err != nil {
 		return nil, err
@@ -40,4 +47,8 @@ func RetrieveEmailSecret(emailConfig *config.EmailConfig) (*model.SesCredentials
 	}
 	sesCredentials.MailFrom = emailConfig.MailFrom
 	return sesCredentials, nil
+}
+
+func getLocalDbConfig() (*model.DbDetails, error) {
+	return nil, nil
 }

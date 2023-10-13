@@ -17,7 +17,7 @@ func NewCSVWriter(filePath string) *CSVWriter {
 	return &CSVWriter{filePath: filePath}
 }
 
-func (cw *CSVWriter) WriteCSV(data []model.CreativeReviewModelLight) error {
+func (cw *CSVWriter) WriteCSV(data []model.CreativeReviewModelOnDemand) error {
 	file, err := os.Create(cw.filePath)
 	if err != nil {
 		return err

@@ -7,3 +7,4 @@ const REPORT_REQUEST = "REPORT_REQUEST"
 
 // Others
 const LOCAL = "local"
+const IS_LOCAL = true

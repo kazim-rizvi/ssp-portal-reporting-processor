@@ -5,7 +5,10 @@ import (
 	"os"
 	"ssp-portal-reporting-processor/config"
 	"ssp-portal-reporting-processor/constants"
+	"ssp-portal-reporting-processor/dao"
+	"ssp-portal-reporting-processor/model"
 	"ssp-portal-reporting-processor/service/aws/secrets_manager"
+	"ssp-portal-reporting-processor/service/report"
 	"ssp-portal-reporting-processor/utils"
 	// "ssp-portal-reporting-processor/service/csv"
 	// "ssp-portal-reporting-processor/email"
@@ -18,10 +21,10 @@ func main() {
 	args := os.Args
 	currentProfile := os.Getenv(constants.PROFILE)
 	projectVersion := os.Getenv(constants.PROJECT_VERSION)
-	reportRequestData := os.Getenv(constants.REPORT_REQUEST)
+	reportRequestJsonString := os.Getenv(constants.REPORT_REQUEST)
 
 	// Log the data
-	logData(projectVersion, currentProfile, args, reportRequestData)
+	logData(projectVersion, currentProfile, args, reportRequestJsonString)
 
 	// Load config for current profile
 	config, err := config.LoadConfig(currentProfile)
@@ -31,25 +34,34 @@ func main() {
 	}
 
 	// Deocode Secrets
-	dbDetailsPtr, err := secrets_manager.RetrieveAllDbData(&config.DBConfig)
+	dbDetailRef, err := secrets_manager.RetrieveDbSecret(&config.DBConfig)
 	if err != nil {
 		log.Fatalf("Error fetching DB details from secrets manager: %v", err)
 		utils.ExitProgram(true)
 	}
-	sesCredentialsPtr, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
+	sesCredentialRef, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
 	if err != nil {
 		log.Fatalf("Error fetching SES credentials from secrets manager: %v", err)
 		utils.ExitProgram(true)
 	}
-	s3CredentialsPtr := &config.S3Config
+	s3CredentialRef := &config.S3Config
+
+	//Unmarshall report request
+	reportRequestRef, err := utils.UnmarshalJson[model.ReportRequest](reportRequestJsonString)
 
 	// Log the data
 	// TODO: Remove this
-	utils.LogDetails(*dbDetailsPtr, "Db Details", false)
-	utils.LogDetails(*sesCredentialsPtr, "SES Credentials", false)
-	utils.LogDetails(*s3CredentialsPtr, "S3 Credentials", false)
+	utils.LogDetails(*dbDetailRef, "Db Details", false)
+	utils.LogDetails(*sesCredentialRef, "SES Credentials", false)
+	utils.LogDetails(*s3CredentialRef, "S3 Credentials", false)
 
-	log.Printf("%+v\n", config)
+	// Setup DB for MobileAd Primary and Tvad Pi
+	mobileAdPrimaryConnectionRef, err := dao.NewDataFetcher(dbDetailRef.MobileAd.Primary)
+	tvAdPiConnectionRef, err := dao.NewDataFetcher(dbDetailRef.TvAd.PIData)
+
+	//Create Report Manager
+	reportManager := report.NewReportManager(mobileAdPrimaryConnectionRef, tvAdPiConnectionRef, reportRequestRef)
+
 	// fmt.Printf(cfg.DBConfig.Host)
 
 	// Fetch data from the DB in a batched way

@@ -1,16 +1,16 @@
 package model
 
 type CreativeReviewModel struct {
-	CreativeReviewModelLight
-	CreativeReviewModelHeavy
+	CreativeReviewModelOnDemand
+	CreativeReviewModelScheduled
 }
 
-type CreativeReviewModelLight struct {
+type CreativeReviewModelOnDemand struct {
 	Id   int
 	Crid string
 }
 
-type CreativeReviewModelHeavy struct {
+type CreativeReviewModelScheduled struct {
 	IdBig   int
 	CridBig string
 }
