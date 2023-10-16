@@ -61,6 +61,7 @@ func main() {
 
 	//Create Report Manager
 	reportManager := report.NewReportManager(mobileAdPrimaryConnectionRef, tvAdPiConnectionRef, reportRequestRef)
+	
 
 	// fmt.Printf(cfg.DBConfig.Host)
 

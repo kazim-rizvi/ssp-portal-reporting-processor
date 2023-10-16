@@ -22,7 +22,7 @@ func NewDataFetcher(connection model.DbConnection) (*DataFetcher, error) {
 	if err != nil {
 		return nil, err
 	}
-
+				
 	db.SetMaxOpenConns(1)
 	db.SetMaxIdleConns(1)
 

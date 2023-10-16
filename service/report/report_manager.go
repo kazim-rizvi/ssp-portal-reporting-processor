@@ -19,3 +19,4 @@ func NewReportManager(mobileAdPrimaryConnection *dao.DataFetcher,
 		ReportRequest:             reportRequest,
 	}
 }
+

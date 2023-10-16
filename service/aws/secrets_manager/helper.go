@@ -49,6 +49,6 @@ func RetrieveEmailSecret(emailConfig *config.EmailConfig) (*model.SesCredentials
 	return sesCredentials, nil
 }
 
-func getLocalDbConfig() (*model.DbDetails, error) {
+func getLocalDbConfig() (*model.DbDetails, error) {\
 	return nil, nil
 }
