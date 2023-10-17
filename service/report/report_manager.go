@@ -9,6 +9,7 @@ type ReportManager struct {
 	MobileAdPrimaryConnection *dao.DataFetcher
 	TvAdPiConnection          *dao.DataFetcher
 	ReportRequest             *model.ReportRequest
+	RecepientData             *model.RecepientsData
 }
 
 func NewReportManager(mobileAdPrimaryConnection *dao.DataFetcher,
@@ -20,3 +21,9 @@ func NewReportManager(mobileAdPrimaryConnection *dao.DataFetcher,
 	}
 }
 
+func (reportManager *ReportManager) setupReport() {
+	// Fetch recepients
+	// Fetch User Data
+	// Fetch placement Data
+
+}

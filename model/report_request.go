@@ -1,12 +1,25 @@
 package model
 
+import "ssp-portal-reporting-processor/model/types"
+
 type ReportRequest struct {
+	ReportRequestConfig
+	ReportRequestMandatoryParams
+	ReportRequestFilters
+}
+
+type ReportRequestMandatoryParams struct {
 	FromDate      string `json:"fromDate"`
 	ToDate        string `json:"toDate"`
 	DateRangeType string `json:"dateRangeType"`
 	Active        string `json:"active"`
 	Flag          string `json:"flag"`
-	ReportRequestFilters
+}
+
+type ReportRequestConfig struct {
+	IsScheduled            bool             `json:"isScheduled"`
+	RequestingUserIds      types.Int64Slice `json:"requestingUserIds"`
+	ReportTriggerTimestamp int64            `json:"reportTriggerTimestamp"`
 }
 
 type ReportRequestFilters struct {
