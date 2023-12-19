@@ -25,5 +25,4 @@ func (reportManager *ReportManager) setupReport() {
 	// Fetch recepients
 	// Fetch User Data
 	// Fetch placement Data
-
 }

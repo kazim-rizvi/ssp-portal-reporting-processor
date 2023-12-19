@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"os"
 	"ssp-portal-reporting-processor/config"
 	"ssp-portal-reporting-processor/constants"
 	"ssp-portal-reporting-processor/dao"
 	"ssp-portal-reporting-processor/model"
+	"ssp-portal-reporting-processor/service/aws/email"
 	"ssp-portal-reporting-processor/service/aws/secrets_manager"
 	"ssp-portal-reporting-processor/service/report"
 	"ssp-portal-reporting-processor/utils"
@@ -29,40 +29,47 @@ func main() {
 	// Load config for current profile
 	config, err := config.LoadConfig(currentProfile)
 	if err != nil {
-		log.Fatalf("Error loading config: %v", err)
-		utils.ExitProgram(true)
+		email.SendEmailForFailure(err)
+		utils.LogDetails(`Error loading config`, err.Error(), true)
 	}
 
 	// Deocode Secrets
 	dbDetailRef, err := secrets_manager.RetrieveDbSecret(&config.DBConfig)
 	if err != nil {
-		log.Fatalf("Error fetching DB details from secrets manager: %v", err)
-		utils.ExitProgram(true)
+		utils.LogDetails(`Error fetching DB details from secrets manager`, err.Error(), true)
 	}
+
 	sesCredentialRef, err := secrets_manager.RetrieveEmailSecret(&config.EmailConfig)
 	if err != nil {
-		log.Fatalf("Error fetching SES credentials from secrets manager: %v", err)
-		utils.ExitProgram(true)
+		utils.LogDetails(`Error fetching SES credentials from secrets manager`, err.Error(), true)
 	}
 	s3CredentialRef := &config.S3Config
 
 	//Unmarshall report request
 	reportRequestRef, err := utils.UnmarshalJson[model.ReportRequest](reportRequestJsonString)
+	if err != nil {
+		utils.LogDetails(`Error unmarshalling report request json`, err.Error(), true)
+	}
 
 	// Log the data
 	// TODO: Remove this
-	utils.LogDetails(*dbDetailRef, "Db Details", false)
-	utils.LogDetails(*sesCredentialRef, "SES Credentials", false)
-	utils.LogDetails(*s3CredentialRef, "S3 Credentials", false)
+	utils.LogDetails("Db Details", *dbDetailRef, false)
+	utils.LogDetails("SES Credentials", *sesCredentialRef, false)
+	utils.LogDetails("S3 Credentials", *s3CredentialRef, false)
 
 	// Setup DB for MobileAd Primary and Tvad Pi
 	mobileAdPrimaryConnectionRef, err := dao.NewDataFetcher(dbDetailRef.MobileAd.Primary)
+	if err != nil {
+		utils.LogDetails(`Error cretaing DB Connection for MobileAd Primary`, err.Error(), true)
+	}
 	tvAdPiConnectionRef, err := dao.NewDataFetcher(dbDetailRef.TvAd.PIData)
+	if err != nil {
+		utils.LogDetails(`Error cretaing DB Connection for TvAd PI`, err.Error(), true)
+	}
 
 	//Create Report Manager
 	reportManager := report.NewReportManager(mobileAdPrimaryConnectionRef, tvAdPiConnectionRef, reportRequestRef)
 	
-
 	// fmt.Printf(cfg.DBConfig.Host)
 
 	// Fetch data from the DB in a batched way

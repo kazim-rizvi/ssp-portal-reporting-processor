@@ -2,12 +2,11 @@ package utils
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 )
 
-func LogDetails(val any, title string, isPanic bool) {
+func LogDetails(title string, val any, isPanic bool) {
 	if isPanic {
 		log.Panicf("%v :: %v\n", title, val)
 	} else {
@@ -26,7 +25,6 @@ func ExitProgram(failed bool) {
 func UnmarshalJson[D any](value string) (*D, error) {
 	var data D
 	if err := json.Unmarshal([]byte(value), &data); err != nil {
-		fmt.Println("Error unmarshaling secret data:", err)
 		return nil, err
 	}
 	return &data, nil
